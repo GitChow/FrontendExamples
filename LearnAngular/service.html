@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+
+<body>
+
+    <div ng-app="myApp" ng-controller="myCtrl">
+        <h1> the location service</h1>
+
+        <p>The url of this page is:</p>
+        <h3>{{myUrl}}</h3>
+
+
+        <h1>the custom service try out</h1>
+        <p ng-bind="hex"></p>
+
+        <h1>use service inside filter</h1>
+        <h2>Once you have created a service, and connected it to your application, you can use the service in any controller,
+            directive, filter, or even inside other services. To use the service inside a filter, add it as a dependency
+            when defining the filter:</h2>
+        <p>{{255 | myFormat}}</p>
+
+    </div>
+
+
+    <script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope, $location, hexafy) {
+    $scope.myUrl = $location.absUrl();
+
+    $scope.hex = hexafy.myFunc(255);
+
+});
+
+// the http service
+// app.controller('myCtrl', function($scope, $http) {
+//   $http.get("welcome.htm").then(function (response) {
+//       $scope.myWelcome = response.data;
+//   });
+// });
+
+// the timeout service
+// app.controller('myCtrl', function($scope, $timeout) {
+//     $scope.myHeader = "Hello World!";
+//     $timeout(function () {
+//         $scope.myHeader = "How are you today?";
+//     }, 2000);
+
+
+//the interval service
+// app.controller('myCtrl', function($scope, $interval) {
+//     $scope.theTime = new Date().toLocaleTimeString();
+//     $interval(function () {
+//         $scope.theTime = new Date().toLocaleTimeString();
+//     }, 1000);
+
+//create own service
+app.service('hexafy', function() {
+    this.myFunc = function (x) {
+        return x.toString(16);
+    }
+});
+
+
+app.filter('myFormat',['hexafy', function(hexafy) {
+    return function(x) {
+        return hexafy.myFunc(x);
+    };
+}]);
+
+</script>
+
+</body>
+
+</html>
