@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+
+<body>
+
+    <!--directive 注意这里是w3-test-directive, 下面是w3TestDirective-->
+    <div ng-app="myApp" ng-controller="myCtrl" w3-test-directive>
+        {{ firstName + " " + lastName }}
+    </div>
+
+    <script>
+
+var app = angular.module("myApp", []);
+app.controller("myCtrl", function($scope) {
+    $scope.firstName = "John";
+    $scope.lastName = "Doe";
+});
+
+
+app.directive("w3TestDirective", function() {
+    return {
+        template : "I was made in a directive constructor!"
+    };
+});
+
+</script>
+</body>
+
+
+</html>
