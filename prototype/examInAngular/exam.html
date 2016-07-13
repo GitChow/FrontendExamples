@@ -1,0 +1,226 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1">
+
+	<title>测试</title>
+	<link rel="stylesheet" href="exam.css">
+
+</head>
+
+<script src="angular.min.js"></script>
+
+<body ng-app="examApp" ng-controller="examCtrl">
+	<div class="top-container">
+		<div class="exam-container">
+			<div class="exam" id="question_{{question.id}}" ng-repeat="question in questions" ng-show="$index == currentQuestionNumber">
+				<div class="question">{{question.name}}</div>
+				<div class="answer" ng-repeat="option in question.options">
+					<input id="question_{{$parent.$index}}_option_{{$index}}" type="radio" ng-model="Answers[question.id]" name="question_{{$parent.$index}}_choice"
+						value="{{$index}}">
+					<label for="question_{{$parent.$index}}_option_{{$index}}" class="option_{{$index}}">{{option}}</label>
+				</div>
+			</div>
+
+			<a class="question-submit-button" ng-disabled="!Answers[currentQuestionNumber+1]" ng-click="next()">{{buttonText}}</a>
+		</div>
+
+		<div class="exam_overview">
+			<div class="tip">您已经做了<span>{{finished}}</span>道题,请继续加油</div>
+			<div class="exam_progress_bar" style="width:{{(finished/questions.length)*100}}%"></div>
+			<div class="correct_info">
+				<img src="./images/icon_correct.svg"></img>
+				<span>{{correctAmount}}</span>
+			</div>
+			<div class="wrong_info">
+				<img src="./images/icon_wrong.svg"></img>
+				<span>{{wrongAmount}}</span>
+			</div>
+			<div class="progress_info">
+				<span>{{currentQuestionNumber+1}}/{{questions.length}}</span>
+			</div>
+		</div>
+
+	</div>
+
+	<script>
+var app = angular.module("examApp", []);
+app.controller("examCtrl", function($scope,$timeout) {
+
+
+	$scope.finished = 0;
+	$scope.currentQuestionNumber = 0;
+	$scope.progress = 0;
+	$scope.wrongAmount = 0;
+	$scope.correctAmount = 0;
+	$scope.buttonText = "提交";
+	$scope.Answers ={};
+	$scope.checkDisable = function (){
+		var questionAnswerName="question_"+$scope.currentQuestionNumber+"_choice"
+		var questionAnswerNameString= "input[name='"+questionAnswerName+"']:checked"	
+		var answerRadio= document.querySelector(questionAnswerNameString)
+		if(answerRadio){
+			return false
+		}
+
+		return true;
+	}
+
+
+	$scope.next = function (){
+		$scope.currentQuestionNumber++;
+		//print the whole Answers
+		console.info($scope.Answers)
+
+		//print the current choice
+		console.info($scope.Answers[$scope.currentQuestionNumber])
+	}
+
+
+	$scope.nextQuestion = function (currentNumber) {
+
+		//1, 在下方总览区域 高亮对应题号
+
+		//2. 在下方总览区域 标记对应题号为已选
+		document.querySelector(".icon_"+currentNumber).className+=" selected"
+
+		$timeout( function(){
+
+			//计算已答题百分比，并标记proggress bar
+			var allAnswered=0;
+			for(var i=1;i<=10;i++){
+				var questionAnswerName="question_"+i+"_answer"
+				var questionAnswerNameString= "input[name='"+questionAnswerName+"']:checked"			
+				var answerRadio= document.querySelector(questionAnswerNameString)
+				if(answerRadio!=null){
+					allAnswered++
+				}
+			}
+			var progressWidthString=(allAnswered/$scope.questions.length)*100+"%";
+			$scope.progress=progressWidthString
+
+			//TODO : 
+			//移到下一空题, 到底后从第一题开始查找并移到第一空题
+			var nextRadio = "selected";
+			var loop=0;
+			while (nextRadio !=null && loop <= 9) {
+				loop ++
+				if($scope.current == 10){
+					$scope.current = 1;
+				}else{
+					$scope.current++;
+				}
+				var questionAnswerNameString= "input[name='question_"+$scope.current+ "_answer']:checked"			
+				var nextRadio= document.querySelector(questionAnswerNameString)
+			}
+
+        },200)
+    };
+
+	// $scope.goCurrent = function (event) {
+	// 	$scope.current = angular.element(event.target).text();
+	// };
+   
+    $scope.questions = [
+		{
+			'id': 1,
+			'name': '以下哪一项是项目定义阶段中启动过程的一个主要成果。-1',
+			'options':[
+				'选项A',
+				'选项B',
+				'选项C',
+				'选项D'
+			]
+		},{
+			'id': 2,
+			'name': '项目进行到一半时，客户想取消剩余的工作和合同。最佳的方法是查看下列哪项来确定项目的目的?2',
+			'options':[
+				'获得足够的s项目经费',
+				'获得足够asdf的项目经费',
+				'获得足够s的项目经费',
+				'获得足够asf的项目经费'
+			]
+		},{
+			'id': 3,
+			'name': '下列哪种类型的合同为买方提供了最小的风险3',
+			'options':[
+				'获得足够s的项目f经费',
+				'获得足够fd的项目经费',
+				'获得足够s的项s目经费',
+				'获得足够s的项目经费'
+			]
+		},{
+			'id': 4,
+			'name': '项目进行到一半时，客户想哪项来确定项目的目的?4',
+			'options':[
+				'获得足fas够的项目经费',
+				'获得足够的as目经费',
+				'获得足a的项daa目经费',
+				'获得足够的d项目经费'
+			]
+		},{
+			'id': 5,
+			'name': '项目进行到一半时，客户的?5',
+			'options':[
+				'获得足asdv够的项ad目经费',
+				'获得足够的项目af经费',
+				'获得足够的fasdf项目经费',
+				'获得足够的fa项目经费'
+			]
+		},{
+			'id': 6,
+			'name': '项目进行到一半时，客户来确定项目的目的?6',
+			'options':[
+				'获得足够yi的项目经费',
+				'获得足够的ii项目经费',
+				'获得足iy够的项目经费',
+				'获得足够的r项目经费'
+			]
+		},{
+			'id': 7,
+			'name': '项目进行到一半时查看下列哪项来确定项目的目的?7',
+			'options':[
+				'获得足够的i56项目经费',
+				'获得足够34的项目经费',
+				'获得足够的项qetr目经费',
+				'获得足够351her的项目经费'
+			]
+		},{
+			'id': 8,
+			'name': '项目进行到一半时，客户想取消剩余的工作和合同。最佳的方法是查看下列哪项来确定项目的目的?8',
+			'options':[
+				'获得足够的项erty目经费',
+				'获得足够的retwew52项目经费',
+				'获得足够的w项目经费',
+				'获得足够gwre的项jetyw34目经费'
+			]
+		},{
+			'id': 9,
+			'name': '项目进行到一半时，客户想取消剩余的工作和合同。最佳的方法是查看下列哪项来确定项目的目的?9',
+			'options':[
+				'获得足够的项wert目经费',
+				'获得足够的dgf项目经费',
+				'获得足够的项目trw经费',
+				'获得足够的项目a经费'
+			]
+		},{
+			'id': 10,
+			'name': '项目进行到一半时，客户想取消剩余的工作和合同。最佳的方法是查看下列哪项来确定项目的目的?10',
+			'options':[
+				'获得足够的项dfg目经费',
+				'获得足够的t项目经费',
+				'获得足够的k项目经费',
+				'获得足够er的项目经费'
+			]
+		}
+    ];
+});
+
+
+</script>
+</body>
+
+</html>
